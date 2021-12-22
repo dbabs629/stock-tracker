@@ -1,0 +1,31 @@
+{
+  "name": "stock-response",
+  "version": "1.0.0",
+  "description": "This application allows users to input a company's URL which will \"scrape the website\" to collect the latest new's posted by the company. The scraper will also collect the current stock price at that time and ask the user if they would like to receive an email if the stock price dips below or above a specific price. The application will send the user emails that contain the desired data the user requested.",
+  "main": "server.js",
+  "scripts": {
+    "start": "nodemon server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dbabs629/stock-response.git"
+  },
+  "author": "Daniel Babin",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/dbabs629/stock-response/issues"
+  },
+  "homepage": "https://github.com/dbabs629/stock-response#readme",
+  "dependencies": {
+    "body-parser": "^1.19.0",
+    "cheerio": "^1.0.0-rc.10",
+    "express": "^4.17.1",
+    "nodemon": "^2.0.14",
+    "puppeteer": "^10.2.0",
+    "request-promise": "^4.2.6",
+    "socket.io": "^4.1.3"
+  },
+  "devDependencies": {
+    "request": "^2.88.2"
+  }
+}

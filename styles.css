@@ -1,0 +1,47 @@
+body {
+    padding:0;
+    margin:0;
+    box-sizing: border-box;
+    text-align: center;
+}
+#search-bar {
+    display: inline-block;
+}
+.stock-list-container {
+    width: 100%;
+    height: auto;
+}
+.dropdown-toggle {
+    width:150px;
+    height:auto;
+    vertical-align: 0.0em;
+}
+.colon-symbol {
+    font-size: 150%;
+    font-weight: bolder;
+}
+
+.stock-list {
+    max-width: 50vw;
+    width: 100%;
+    height: auto;
+    display: flex;
+    flex-flow: column wrap;
+    border-radius: 5px;
+    justify-content: space-evenly;
+    margin: 0 auto;
+}
+
+.card {
+    max-width:100%;
+    padding:0;
+    margin:0;
+}
+
+.card-header {
+    font-weight: bold;
+}
+
+.card-stock {
+    font-style:italic;
+}
