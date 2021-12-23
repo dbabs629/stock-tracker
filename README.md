@@ -2,6 +2,7 @@
 This application allows users to input a company's stock symbol and it's index which will scrape Google's finance quote webpage (https://www.google.com/finance/ + company symbol : market index) to collect the latest price and new's. The user can save stocks they wish to track into a database to be viewed anytime they access the website. They will also have an option to have an email sent to them when a stock price changes or for the latest news item.
 
 
+Problems I ran into while building this application.
 
 Problem #1:
 I used Cheerio to request a HTML Document and selected elements based on class. However, the webpage I retrieved was dynamic and the classes changed often based on the data. 
