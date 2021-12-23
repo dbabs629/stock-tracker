@@ -15,7 +15,6 @@
   "bugs": {
     "url": "https://github.com/dbabs629/stock-response/issues"
   },
-  "homepage": "https://github.com/dbabs629/stock-response#readme",
   "dependencies": {
     "body-parser": "^1.19.0",
     "cheerio": "^1.0.0-rc.10",
