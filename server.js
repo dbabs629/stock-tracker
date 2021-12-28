@@ -2,15 +2,15 @@
 // 2. Update stock prices every 5
 // 3. Delete button
 
-var express = require('express');
+var express = require("express");
 var app = express();
-var bodyParser = require('body-parser');
-var http = require('http').Server(app);
-var io = require('socket.io')(http);
-const rp = require('request-promise');
-const cheerio = require('cheerio');
+var bodyParser = require("body-parser");
+var http = require("http").Server(app);
+var io = require("socket.io")(http);
+const rp = require("request-promise");
+const cheerio = require("cheerio");
 const port = process.env.PORT || 5000;
-const { SSL_OP_SSLEAY_080_CLIENT_DH_BUG } = require('constants');
+const { SSL_OP_SSLEAY_080_CLIENT_DH_BUG } = require("constants");
 
 //Serves static index.html file to the browser
 app.use(express.static(__dirname));
@@ -29,85 +29,106 @@ let stockList = [];
 */
 
 app.post("/", (req, res) => {
-  let url = "https://www.google.com/finance/quote/" + req.body.name + ":" + req.body.stock;
-  let searchUrl = "https://www.google.com/finance/quote/" + req.body.name + ":" + req.body.stock;
-  rp(url)
-    .then((html) => {
-      const $ = cheerio.load(html);
-      let stock = `${req.body.name} : ${req.body.stock}`;
-      let company = $('main > div:eq(0)', html).children('div:eq(1)').text();  /* NAVIGATE TO GET THE MAIN DIV, SUBSEQUENT DIVS name should not change */
-      let price = $('main > div:eq(1)', html).find('span > div:eq(0)').children('div').text();
+  let url =
+    "https://www.google.com/finance/quote/" +
+    req.body.name +
+    ":" +
+    req.body.stock;
+  let searchUrl =
+    "https://www.google.com/finance/quote/" +
+    req.body.name +
+    ":" +
+    req.body.stock;
+  try {
+    rp(url)
+      .then((html) => {
+        const $ = cheerio.load(html);
+        let stock = `${req.body.name} : ${req.body.stock}`;
+        let company = $("main > div:eq(0)", html)
+          .children("div:eq(1)")
+          .text(); /* NAVIGATE TO GET THE MAIN DIV, SUBSEQUENT DIVS name should not change */
+        let price = $("main > div:eq(1)", html)
+          .find("span > div:eq(0)")
+          .children("div")
+          .text();
 
-      //if all data are true
-      if (stock && company && price) {
-        //if statement runs if stockList array in server is greater than 0, should check if null as well
-        if (stockList.length > 0) {
-          var n;
-          for (let i = 0; i < stockList.length; i++) {
-            //checking if stock exists in array meaning it's been searched before
-            n = stockList[i].stock.includes(stock);
-            if (n === true) {
-              //stock exists in array
-              break;
-            } else {
-              //stock does not exist in array
-              console.log("doesn't exist");
+        //if all data are true
+        if (stock && company && price) {
+          //if statement runs if stockList array in server is greater than 0, should check if null as well
+          if (stockList.length > 0) {
+            var n;
+            for (let i = 0; i < stockList.length; i++) {
+              //checking if stock exists in array meaning it's been searched before
+              n = stockList[i].stock.includes(stock);
+              if (n === true) {
+                //stock exists in array
+                break;
+              } else {
+                //stock does not exist in array
+                console.log("doesn't exist");
+              }
             }
-          };
 
-          if (n === true) {
-            console.log('exists');
-            let repeatStock = 'This stock already exists';
-            io.emit(repeatStock);
-
+            if (n === true) {
+              console.log("exists");
+              let repeatStock = "This stock already exists";
+              io.emit(repeatStock);
+            } else {
+              stockList.push({
+                searchUrl: searchUrl,
+                company: company,
+                stock: stock,
+                price: price,
+              });
+              let stockData = { company: company, stock: stock, price: price };
+              io.emit("search", stockData);
+            }
+            //if array length is greater than 0 add new stock to array and send data to the browser
           } else {
-            stockList.push({ searchUrl: searchUrl, company: company, stock: stock, price: price });
+            stockList.push({
+              searchUrl: searchUrl,
+              company: company,
+              stock: stock,
+              price: price,
+            });
             let stockData = { company: company, stock: stock, price: price };
-            io.emit('search', stockData);
-
+            io.emit("search", stockData);
           }
-          //if array length is greater than 0 add new stock to array and send data to the browser
         } else {
-          stockList.push({ searchUrl: searchUrl, company: company, stock: stock, price: price });
-          let stockData = { company: company, stock: stock, price: price };
-          io.emit('search', stockData);
-
+          console.log("User Search Error");
+          io.emit("error", req.body.name, req.body.stock);
         }
-      } else {
-        console.log("User Search Error");
-        io.emit('error', req.body.name, req.body.stock);
-
-      }
-    })
-    .catch(function (err) {
-      console.log(err);
-    });
+      })
+      .catch(function (err) {
+        console.log(err);
+      });
+  } catch {
+    console.log(err.message);
+  }
 
   res.sendStatus(200);
 });
 
-
 setInterval(() => {
   let array = [...stockList];
   for (let i = 0; i < array.length; i++) {
-    rp(array[i].searchUrl)
-    .then((html) => {
+    rp(array[i].searchUrl).then((html) => {
       const $ = cheerio.load(html);
-      array[i].price = $('main > div:eq(1)', html).find('span > div:eq(0)').children('div').text();
+      array[i].price = $("main > div:eq(1)", html)
+        .find("span > div:eq(0)")
+        .children("div")
+        .text();
       console.log(array[i].price);
-    })
-  };
-  io.emit('refresh', array);
-
+    });
+  }
+  io.emit("refresh", array);
 }, 5000);
 
-
-io.on('connection', (socket) => {
+io.on("connection", (socket) => {
   //sends existing stocks in array to the browser
-  io.emit('sendList', stockList);
-
+  io.emit("sendList", stockList);
 });
 
 var server = http.listen(3000, () => {
-  console.log('server is listening on port', server.address().port);
+  console.log("server is listening on port", server.address().port);
 });
