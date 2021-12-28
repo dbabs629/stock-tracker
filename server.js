@@ -9,6 +9,7 @@ var http = require('http').Server(app);
 var io = require('socket.io')(http);
 const rp = require('request-promise');
 const cheerio = require('cheerio');
+const port = process.env.PORT || 5000;
 const { SSL_OP_SSLEAY_080_CLIENT_DH_BUG } = require('constants');
 
 //Serves static index.html file to the browser
