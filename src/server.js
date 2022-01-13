@@ -9,10 +9,7 @@ var io = require("socket.io")(http);
 const axios = require("axios");
 const cheerio = require("cheerio");
 // const port = process.env.PORT || 5000;
-var server = app.listen(app.get('port'), function() {
-  console.log('listening on port ', server.address().port);
-});
-app.set('port', process.env.PORT || 80);
+// app.set('port', process.env.PORT || 80);
 const { SSL_OP_SSLEAY_080_CLIENT_DH_BUG } = require("constants");
 
 //Serves static index.html file to the browser
@@ -21,7 +18,12 @@ app.use(express.static(__dirname));
 app.use(bodyParser.json());
 //browser data is urlencoded and must be parsed accordingly
 app.use(bodyParser.urlencoded({ extended: false }));
-
+// var port = process.env.PORT || 80;
+// var server = app.listen(app.get('port'), function() {
+//   console.log('listening on port ', server.address().port);
+// });
+var port_number = server.listen(process.env.PORT || 80);
+app.listen(port_number);
 //stores the user's search data
 let stockList = [];
 
