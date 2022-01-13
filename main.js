@@ -126,6 +126,11 @@ let searchError = (errStock, errStockExchange) => {
 
 let searchStock = (search) => $.post("http://localhost:3000", search);
 
+let test = (data) => console.log(data)
+
+
+socket.on("test", test);
+
 socket.on("search", addStock);
 
 socket.on("sendList", checkList);

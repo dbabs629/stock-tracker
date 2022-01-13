@@ -1,14 +1,11 @@
-// 1. Fix refresh separates same company stocks
-// 2. Update stock prices every 5
-// 3. Delete button
-
 var express = require("express");
 var app = express();
 var bodyParser = require("body-parser");
 var http = require("http").Server(app);
 var io = require("socket.io")(http);
-const request = require("request");
-const rp = require("request-promise");
+// const request = require("request");
+// const rp = require("request-promise");
+const axios = require("axios");
 const cheerio = require("cheerio");
 const port = process.env.PORT || 5000;
 const { SSL_OP_SSLEAY_080_CLIENT_DH_BUG } = require("constants");
@@ -29,62 +26,42 @@ let stockList = [];
   I had to traverse the DOM to find each element's relative position to the <main> tag. Then I found each parent <div> tag until I got to the element I wanted to retrieve and it's text.
 */
 
-app.post("/", (req, res) => {
-  let url =
+app.post("/", async (req, res) => {
+    let searchUrl =
     "https://www.google.com/finance/quote/" +
     req.body.name +
     ":" +
     req.body.stock;
-  let searchUrl =
-    "https://www.google.com/finance/quote/" +
-    req.body.name +
-    ":" +
-    req.body.stock;
-  try {
-    rp(url)
-      .then((html) => {
-        const $ = cheerio.load(html);
-        let stock = `${req.body.name} : ${req.body.stock}`;
-        let company = $("main > div:eq(0)", html)
-          .children("div:eq(1)")
-          .text(); /* NAVIGATE TO GET THE MAIN DIV, SUBSEQUENT DIVS name should not change */
-        let price = $("main > div:eq(1)", html)
-          .find("span > div:eq(0)")
-          .children("div")
-          .text();
-
-        //if all data are true
-        if (stock && company && price) {
-          //if statement runs if stockList array in server is greater than 0, should check if null as well
-          if (stockList.length > 0) {
-            var n;
-            for (let i = 0; i < stockList.length; i++) {
-              //checking if stock exists in array meaning it's been searched before
-              n = stockList[i].stock.includes(stock);
-              if (n === true) {
-                //stock exists in array
-                break;
-              } else {
-                //stock does not exist in array
-                console.log("doesn't exist");
-              }
-            }
-
+    await axios.get(searchUrl)
+    .then(res => {
+      const $ = cheerio.load(res.data);
+      let stock = `${req.body.name} : ${req.body.stock}`;
+      let indexStart = $.html("main > div:eq(0) > div:eq(1)").indexOf(">") + 1;
+      let indexEnd = $.html("main > div:eq(0) > div:eq(1)").indexOf("<", ("<".indexOf("<") + 1));
+      let company = $.html("main > div:eq(0) > div:eq(1)").substring(indexStart, indexEnd);
+      let index$ = $.html("span:contains($) > div:eq(0) > div").indexOf("$");
+      let indexCents = $.html("span:contains($) > div:eq(0) > div").indexOf(".") + 3;
+      let price = $.html("span:contains($) > div:eq(0) > div").substring(index$, indexCents);
+      if (stock && company && price) {
+        //if statement runs if stockList array in server is greater than 0, should check if null as well
+        if (stockList.length > 0) {
+          var n;
+          for (let i = 0; i < stockList.length; i++) {
+            //checking if stock exists in array meaning it's been searched before
+            n = stockList[i].stock.includes(stock);
             if (n === true) {
-              console.log("exists");
-              let repeatStock = "This stock already exists";
-              io.emit(repeatStock);
+              //stock exists in array
+              break;
             } else {
-              stockList.push({
-                searchUrl: searchUrl,
-                company: company,
-                stock: stock,
-                price: price,
-              });
-              let stockData = { company: company, stock: stock, price: price };
-              io.emit("search", stockData);
+              //stock does not exist in array
+              console.log("doesn't exist");
             }
-            //if array length is greater than 0 add new stock to array and send data to the browser
+          }
+
+          if (n === true) {
+            console.log("exists");
+            let repeatStock = "This stock already exists";
+            io.emit(repeatStock);
           } else {
             stockList.push({
               searchUrl: searchUrl,
@@ -95,30 +72,38 @@ app.post("/", (req, res) => {
             let stockData = { company: company, stock: stock, price: price };
             io.emit("search", stockData);
           }
+          //if array length is greater than 0 add new stock to array and send data to the browser
         } else {
-          console.log("User Search Error");
-          io.emit("error", req.body.name, req.body.stock);
+          stockList.push({
+            searchUrl: searchUrl,
+            company: company,
+            stock: stock,
+            price: price,
+          });
+          let stockData = { company: company, stock: stock, price: price };
+          io.emit("search", stockData);
         }
-      })
-      .catch(function (err) {
-        console.log(err);
-      });
-  } catch {
-    console.log(err.message);
-  }
+      } else {
+        console.log("User Search Error");
+        io.emit("error", req.body.name, req.body.stock);
+      }
+    })
 
+  .catch (error => {
+    console.error(error);
+  })
   res.sendStatus(200);
 });
 
 setInterval(() => {
   let array = [...stockList];
   for (let i = 0; i < array.length; i++) {
-    rp(array[i].searchUrl).then((html) => {
-      const $ = cheerio.load(html);
-      array[i].price = $("main > div:eq(1)", html)
-        .find("span > div:eq(0)")
-        .children("div")
-        .text();
+    axios.get(array[i].searchUrl)
+    .then(res => {
+      const $ = cheerio.load(res.data);
+      let index$ = $.html("span:contains($) > div:eq(0) > div").indexOf("$");
+      let indexCents = $.html("span:contains($) > div:eq(0) > div").indexOf(".") + 3;
+      array[i].price = $.html("span:contains($) > div:eq(0) > div").substring(index$, indexCents);
       console.log(array[i].price);
     });
   }
