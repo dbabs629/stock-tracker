@@ -9,10 +9,10 @@ var io = require("socket.io")(http);
 const axios = require("axios");
 const cheerio = require("cheerio");
 // const port = process.env.PORT || 5000;
-app.set('port', process.env.PORT || 80);
 var server = app.listen(app.get('port'), function() {
   console.log('listening on port ', server.address().port);
 });
+app.set('port', process.env.PORT || 80);
 const { SSL_OP_SSLEAY_080_CLIENT_DH_BUG } = require("constants");
 
 //Serves static index.html file to the browser
