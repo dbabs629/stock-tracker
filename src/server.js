@@ -1,10 +1,16 @@
-var path = require('path');
-var express = require("express");
-var app = express();
-var bodyParser = require("body-parser");
-var http = require("http").Server(app);
-var io = require("socket.io")(http);
-var port = process.env.PORT || 80;
+const path = require('path');
+const express = require("express");
+const app = express();
+const bodyParser = require("body-parser");
+const http = require("http").Server(app);
+const io = require("socket.io")(http, {
+  cors: {
+    origin: "https://stock-tracker-nodejs.herokuapp.com/",
+    methods: ["GET", "POST"],
+    credentials: true
+  }
+});;
+let port = process.env.PORT || 80;
 // http.listen(port, () => console.log('listening on port: ', port));
 // const request = require("request");
 // const rp = require("request-promise");
