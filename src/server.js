@@ -22,7 +22,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 // var server = app.listen(app.get('port'), function() {
 //   console.log('listening on port ', server.address().port);
 // });
-var port_number = server.listen(process.env.PORT || 80);
+var port_number = process.env.PORT || 80;
 app.listen(port_number);
 //stores the user's search data
 let stockList = [];
