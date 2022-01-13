@@ -1,3 +1,4 @@
+var path = require('path');
 var express = require("express");
 var app = express();
 var bodyParser = require("body-parser");
@@ -96,10 +97,10 @@ app.post("/", async (req, res) => {
   res.sendStatus(200);
 });
 
-setInterval(() => {
+setInterval(async () => {
   let array = [...stockList];
   for (let i = 0; i < array.length; i++) {
-    axios.get(array[i].searchUrl)
+    await axios.get(array[i].searchUrl)
     .then(res => {
       const $ = cheerio.load(res.data);
       let index$ = $.html("span:contains($) > div:eq(0) > div").indexOf("$");
