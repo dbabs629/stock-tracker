@@ -4,7 +4,7 @@
   "description": "This application allows users to input a company's URL which will \"scrape the website\" to collect the latest new's posted by the company. The scraper will also collect the current stock price at that time and ask the user if they would like to receive an email if the stock price dips below or above a specific price. The application will send the user emails that contain the desired data the user requested.",
   "main": "server.js",
   "scripts": {
-    "start": "node server.js"
+    "start": "node src/server.js"
   },
   "repository": {
     "type": "git",
