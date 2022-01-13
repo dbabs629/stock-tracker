@@ -115,6 +115,10 @@ io.on("connection", (socket) => {
   io.emit("sendList", stockList);
 });
 
-var server = http.listen(3000, () => {
-  console.log("server is listening on port", server.address().port);
+var server = app.listen(app.get('port'), function() {
+  console.log('listening on port ', server.address().port);
 });
+
+// var server = http.listen(3000, () => {
+//   console.log("server is listening on port", server.address().port);
+// });
