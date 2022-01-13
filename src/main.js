@@ -1,8 +1,4 @@
-
-const io = require("socket.io");
-const socket = io("https://stock-tracker-nodejs.herokuapp.com/", {
-  withCredentials: true
-});
+var socket = io.connect("https://stock-tracker-nodejs.herokuapp.com/");
 
 var stockExchange;
 

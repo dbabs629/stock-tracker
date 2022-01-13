@@ -3,13 +3,7 @@ const express = require("express");
 const app = express();
 const bodyParser = require("body-parser");
 const http = require("http").Server(app);
-const io = require("socket.io")(http, {
-  cors: {
-    origin: "https://stock-tracker-nodejs.herokuapp.com/",
-    methods: ["GET", "POST"],
-    credentials: true
-  }
-});;
+const io = require("socket.io")(http);
 let port = process.env.PORT || 80;
 // http.listen(port, () => console.log('listening on port: ', port));
 // const request = require("request");
