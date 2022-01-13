@@ -4,19 +4,19 @@ var app = express();
 var bodyParser = require("body-parser");
 var http = require("http").Server(app);
 var io = require("socket.io")(http);
+var port = process.env.PORT || 80;
+http.listen(port, () => console.log('listening on port: ', port));
 // const request = require("request");
 // const rp = require("request-promise");
 const axios = require("axios");
 const cheerio = require("cheerio");
 const { SSL_OP_SSLEAY_080_CLIENT_DH_BUG } = require("constants");
-
 //Serves static index.html file to the browser
 app.use(express.static("public"));
 //app will parse the res.body into JSON
 app.use(bodyParser.json());
 //browser data is urlencoded and must be parsed accordingly
 app.use(bodyParser.urlencoded({ extended: false }));
-var port = process.env.PORT || 80;
 app.listen(port);
 //stores the user's search data
 let stockList = [];
