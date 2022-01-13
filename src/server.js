@@ -20,6 +20,7 @@ var port = process.env.PORT || 80;
 app.listen(port);
 //stores the user's search data
 let stockList = [];
+console.log(port);
 
 /*
   Due to the webpage being dynamic, classes are changed frequently by Google but I found that the overall structure of the DOM stays the same.
