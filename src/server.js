@@ -13,7 +13,7 @@ const cheerio = require("cheerio");
 const { SSL_OP_SSLEAY_080_CLIENT_DH_BUG } = require("constants");
 
 //Serves static index.html file to the browser
-app.use(express.static(__dirname));
+app.use(express.static(path.join(__dirname, '../public/')));
 //app will parse the res.body into JSON
 app.use(bodyParser.json());
 //browser data is urlencoded and must be parsed accordingly
