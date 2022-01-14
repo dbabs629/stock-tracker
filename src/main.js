@@ -1,4 +1,4 @@
-var socket = io.connect("https://stock-tracker-nodejs.herokuapp.com/");
+var socket = io();
 
 var stockExchange;
 
