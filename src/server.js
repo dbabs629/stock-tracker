@@ -5,11 +5,16 @@ const bodyParser = require("body-parser");
 const http = require('http');
 const server = http.createServer(app);
 const { Server } = require("socket.io");
+
 const io = new Server(server);
+
 let port = process.env.PORT || 80;
-// http.listen(port, () => console.log('listening on port: ', port));
+
+server.listen(port, () => console.log('listening on port: ', port));
+
 // const request = require("request");
 // const rp = require("request-promise");
+
 const axios = require("axios");
 const cheerio = require("cheerio");
 const { SSL_OP_SSLEAY_080_CLIENT_DH_BUG } = require("constants");
@@ -19,7 +24,7 @@ app.use(express.static(__dirname + "/public"));
 app.use(bodyParser.json());
 //browser data is urlencoded and must be parsed accordingly
 app.use(bodyParser.urlencoded({ extended: false }));
-app.listen(port);
+// app.listen(port);
 //stores the user's search data
 let stockList = [];
 console.log(port);

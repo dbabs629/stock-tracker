@@ -1,6 +1,5 @@
 // const socket = require("socket.io-client")("https://stock-tracker-nodejs.herokuapp.com/");
-
-const socket = io();
+let socket = io();
 
 var stockExchange;
 
