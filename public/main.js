@@ -1,5 +1,6 @@
 // const socket = require("socket.io-client")("https://stock-tracker-nodejs.herokuapp.com/");
-let socket = io();
+// let socket = io();
+console.log("running main.js");
 
 var stockExchange;
 
@@ -125,12 +126,7 @@ let searchError = (errStock, errStockExchange) => {
   );
 };
 
-let searchStock = (search) => $.post("http://localhost:3000", search);
-
-let test = (data) => console.log(data)
-
-
-socket.on("test", test);
+let searchStock = (search) => $.post("https://stock-tracker-nodejs.herokuapp.com/", search);
 
 socket.on("search", addStock);
 

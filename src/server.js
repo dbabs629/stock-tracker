@@ -10,7 +10,7 @@ const io = new Server(server);
 
 let port = process.env.PORT || 80;
 
-server.listen(port, () => console.log('listening on port: ', port));
+server.listen(port, () => console.log('Server listening on port: ', port));
 
 // const request = require("request");
 // const rp = require("request-promise");
@@ -19,15 +19,13 @@ const axios = require("axios");
 const cheerio = require("cheerio");
 const { SSL_OP_SSLEAY_080_CLIENT_DH_BUG } = require("constants");
 //Serves static index.html file to the browser
-app.use(express.static(__dirname + "/public"));
-//app will parse the res.body into JSON
+app.use(express.static(path.join(__dirname, "../public")));
 app.use(bodyParser.json());
 //browser data is urlencoded and must be parsed accordingly
 app.use(bodyParser.urlencoded({ extended: false }));
 // app.listen(port);
 //stores the user's search data
 let stockList = [];
-console.log(port);
 
 /*
   Due to the webpage being dynamic, classes are changed frequently by Google but I found that the overall structure of the DOM stays the same.
